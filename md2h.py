@@ -2,8 +2,8 @@
 """
 Markdown to HTML converter script.
 Usage:
-    python md2html.py file.md
-    python md2html.py *.md
+    python md2h.py          # Convert all .md files in current directory
+    python md2h.py -r       # Convert all .md files in current directory and subdirectories
 """
 
 import sys
@@ -578,24 +578,32 @@ def process_markdown_file(md_file_path):
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python md2html.py <file.md> [file2.md ...]")
-        print("   or: python md2html.py *.md")
-        sys.exit(1)
+    # Check for recursive flag
+    recursive = False
+    if len(sys.argv) > 1 and sys.argv[1] == '-r':
+        recursive = True
 
-    # Collect all file paths
+    # Scan for markdown files
     files_to_process = []
-    for arg in sys.argv[1:]:
-        # Handle glob patterns
-        if '*' in arg or '?' in arg:
-            matched_files = glob.glob(arg)
-            files_to_process.extend([f for f in matched_files if f.endswith('.md')])
-        else:
-            files_to_process.append(arg)
+    current_dir = Path('.')
+
+    if recursive:
+        # Recursively find all .md files in current directory and subdirectories
+        print("Scanning current directory and subdirectories for Markdown files...")
+        files_to_process = list(current_dir.rglob('*.md'))
+    else:
+        # Find .md files only in current directory
+        print("Scanning current directory for Markdown files...")
+        files_to_process = list(current_dir.glob('*.md'))
+
+    # Convert Path objects to strings
+    files_to_process = [str(f) for f in files_to_process]
 
     if not files_to_process:
         print("No Markdown files found.")
-        sys.exit(1)
+        sys.exit(0)
+
+    print(f"Found {len(files_to_process)} Markdown file(s).\n")
 
     # Process each file
     success_count = 0
