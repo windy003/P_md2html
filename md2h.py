@@ -152,6 +152,7 @@ def create_html_template(title, body_content):
             margin: 0 auto;
             padding: 20px;
             color: #333;
+            background-color: #faf9f5;
             transition: all 0.3s ease;
             box-sizing: border-box;
             overflow-x: hidden;
